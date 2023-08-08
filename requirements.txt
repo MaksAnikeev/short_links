@@ -1,0 +1,6 @@
+django==3.2.15
+django-debug-toolbar==3.2.1
+environs[django]==9.3.2
+requests==2.28.1
+
+
