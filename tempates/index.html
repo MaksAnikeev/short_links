@@ -4,7 +4,16 @@
   <title>short_links</title>
 </head>
 <body>
-  <h1>Здесь будет менюшка для создания короткой ссылки</h1>
-  <a href="../app" class="breadCrumbs__item">Записаться</a>
+  <h1>Введите полный адрес ссылки, которую вы хотите сократить</h1>
+  <h2>Если нужно имя конкретной ссылки, то введите его, или оно сформируется автоматически</h2>
+    <form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="Submit" name="submit" value="Жми сюда"/>
+    </form>
+
+    {% if submitbutton == "Жми сюда" %}
+    <h1>Your short_links is http://127.0.0.1:8000/{{ short_link }}</h1>
+    {% endif %}
+
 </body>
-</html>

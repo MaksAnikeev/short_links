@@ -3,8 +3,8 @@ import secrets
 import string
 from .models import Links
 from django.http.response import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect
+from .forms import UserForm
 
 
 def create_links(request):
@@ -45,13 +45,58 @@ def create_links(request):
     )
 
 
-def index_page(request):
-    context = {}
-    return render(request, 'index.html', context)
-
-
 def redirect_link(request, short_link):
+    """
+    Перенаправление короткой ссылки на длинную
+    """
     link = get_object_or_404(Links, short_link=f'link/{short_link}')
     link.clicks_count += 1
     link.save()
     return redirect(link.full_link)
+
+
+
+def index_page(request):
+    """
+    Создание короткой ссылки на странице сайта
+    """
+    submitbutton = request.POST.get("submit")
+
+    form = UserForm(request.POST or None)
+    if form.is_valid():
+        full_link = form.cleaned_data.get("full_link")
+        short_link = form.cleaned_data.get("short_link")
+    else:
+        context = {'form': form,
+                   'short_link': 'введена не корректная информация',
+                   'submitbutton': submitbutton,
+                   }
+        return render(request, 'index.html', context)
+
+    if short_link:
+        short_link = f"link/{short_link}"
+        if Links.objects.filter(short_link=short_link).exists():
+            context = {'form': form,
+                       'short_link': 'такая короткая ссылка уже существует, введите другую',
+                       'submitbutton': submitbutton,
+                       }
+            return render(request, 'index.html', context)
+    else:
+        while True:
+            letters_and_digits = string.ascii_letters + string.digits
+            random_word = ''.join(secrets.choice(letters_and_digits) for i in range(10))
+            short_link = f'link/{random_word}'
+            if not Links.objects.filter(short_link=short_link).exists():
+                break
+
+    Links.objects.create(
+        full_link=full_link,
+        short_link=short_link
+    )
+
+    context = {'form': form,
+               'short_link': short_link,
+               'submitbutton': submitbutton,
+               }
+
+    return render(request, 'index.html', context)
