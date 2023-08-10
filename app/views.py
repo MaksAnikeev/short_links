@@ -13,7 +13,7 @@ def create_links(request):
     """
     full_link = request.GET.get('full_link')
     if request.GET.get('short_link'):
-        short_link = request.GET.get('short_link')
+        short_link = f"link/{request.GET.get('short_link')}"
         if Links.objects.filter(short_link=short_link).exists():
             response = {
                 'message': 'такая короткая ссылка уже существует, введите другую'
@@ -26,7 +26,8 @@ def create_links(request):
     else:
         while True:
             letters_and_digits = string.ascii_letters + string.digits
-            short_link = ''.join(secrets.choice(letters_and_digits) for i in range(10))
+            random_word = ''.join(secrets.choice(letters_and_digits) for i in range(10))
+            short_link = f'link/{random_word}'
             if not Links.objects.filter(short_link=short_link).exists():
                 break
     Links.objects.create(
@@ -50,7 +51,7 @@ def index_page(request):
 
 
 def redirect_link(request, short_link):
-    link = get_object_or_404(Links, short_link=short_link)
+    link = get_object_or_404(Links, short_link=f'link/{short_link}')
     link.clicks_count += 1
     link.save()
     return redirect(link.full_link)
