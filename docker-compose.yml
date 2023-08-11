@@ -8,7 +8,7 @@ services:
       && python3 manage.py makemigrations --merge --no-input -v 3
       && python3 manage.py migrate --force-color -v 3
       && python3 manage.py createsuperuser --noinput
-      && && python manage.py runserver 0.0.0.0:8000"
+      && python manage.py runserver 0.0.0.0:8000"
     environment:
       SECRET_KEY: django-insecure-e+=tki09)$l187ppnj4uln&+bmlo12qfznl93!*d!wxbtxjc(v
       DJANGO_SUPERUSER_USERNAME: admin
