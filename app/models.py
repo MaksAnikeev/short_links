@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Links(models.Model):
     short_link = models.CharField(
         max_length=50,
@@ -14,6 +15,7 @@ class Links(models.Model):
         null=True,
         default=0
     )
+
     class Meta:
         db_table = 'links'
         verbose_name = 'ссылка'
